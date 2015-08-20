@@ -1,0 +1,175 @@
+{% extends "viewer/base.html" %}
+
+{% block extra_js %}
+<script type="text/javascript">
+jQuery(document).ready(function(){
+    $('select[name=study]').change(function(){
+        var study_id = $(this).val();
+        var options = [];
+        var request_url = '/viewer/get_bnids_by_study/' + study_id + '/';
+        $.getJSON(
+            request_url,
+            function(data){
+                $.each(data, function(key, val) {
+                    options.push('<option value="' + key + '">' + val + '</option>');
+                });
+                $('select[name=bnids]').html(options.join('\n'));
+            }
+        );
+    });
+
+    $('select[name=bnids]').empty();
+
+    new jBox('Modal', {
+        attach: $('.igsbviewer-modal-add-button'),
+        ajax: {
+            url: '/viewer/report/upload_report'
+        },
+        overlay: true,
+        closeOnClick: 'overlay',
+        closeButton: 'box'
+    });
+    var $modalEditButton = $('.igsbviewer-modal-edit-button');
+    $modalEditButton.click(function(){
+        pk = $(this).data('pk');
+    });
+    new jBox('Modal', {
+        onOpen: function(){
+            this.options.ajax.url = '/viewer/report/edit_report/' + pk;
+        },
+        ajax: {
+            reload: true
+        },
+        attach: $modalEditButton,
+        overlay: true,
+        closeOnClick: 'overlay',
+        closeButton: 'box'
+    });
+
+    /* Set up 'delete' modal box */
+    var pk = 0;
+    var $modalDeleteButton = $('.igsbviewer-modal-delete-button');
+
+    $modalDeleteButton.click(function(){
+        pk = $(this).data('pk');
+    });
+    new jBox('Modal', {
+        onOpen: function(){
+            this.options.ajax.url = '/viewer/report/delete_report/' + pk;
+        },
+        ajax: {
+            reload: true
+        },
+        attach: $modalDeleteButton,
+        overlay: true,
+        closeOnClick: 'overlay',
+        closeButton: 'box'
+    })
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<!-- Modal box content -->
+<div class="container" id="modal_box" style="display:none">
+	<h2>Upload a New Variant Report</h2>
+	<form name='upload_report_form' action="/viewer/upload_report/" method="post" enctype="multipart/form-data">
+		{% csrf_token %}
+        {% for field in report_form %}
+        <div class="row" style="margin-bottom:8px">
+            <div class="col-sm-2">
+                {{ field.label_tag }}
+            </div>
+            <div class="col-sm-6">
+                {{ field }}
+            </div>
+        </div>
+        {% endfor %}
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-2">
+                <button type="submit" class="btn btn-primary">
+                    <span class="fa fa-cloud-upload"></span>&nbsp;&nbsp;Upload
+                </button>
+            </div>
+        </div>
+	</form>
+	<br/>
+</div>
+<!-- End Modal box content -->
+<div class="container">
+	<h2>Available Variant Reports:</h2>
+	<table id="available" class="table table-hover tablesorter">
+		<thead>
+			<tr>
+				<th>Study</th>
+				<th>Sample(s)</th>
+				<th>Genome</th>
+				<th>Caller</th>
+				<th></th>
+                <th></th>
+				<th>Upload Date</th>
+				<th>Load Variants?</th>
+                <th>&nbsp;</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for r in reports %}
+			<tr>
+				<td>{{r.study}}</td>
+				<td>
+					{% for b in r.bnids.all %}
+						{{b.sample}} ({{b.bnid}})<br>
+					{% endfor %}
+				</td>
+				<td>{{r.genome}}</td>
+				<td>{{r.caller}}</td>
+                {% if r.report_file.name %}
+				<!--<td><a href=/viewer/report/view_report/{{r.pk}}/>{{r.report_file.name}}</a></td>-->
+                <td>
+                    <form action="/viewer/report/view_report/{{r.pk}}/" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-primary">
+                            <span class="fa fa-desktop"></span>&nbsp;&nbsp;View
+                        </button>
+                    </form>
+                </td>
+                <td>
+                    <a href="/viewer/files/{{r.report_file.name}}">Download</a>
+                </td>
+                {% else %}
+                <td></td>
+                <td>
+                    <!--
+                    Handle this in separate 'edit' column
+                    <form action="/viewer/edit_report/{{r.id}}/" method="POST">
+                        <input type="hidden" name="Edit" id="{{r.id}}" value="Edit"/>
+                        <button type="submit" class="btn btn-sm btn-primary">
+                            <span class="fa fa-upload"></span>&nbsp;&nbsp;Upload File
+                        </button>
+                    </form>
+                    -->
+                </td>
+                {% endif %}
+				<td>{{r.upload_date}}</td>
+				<td>
+					<form action="/viewer/load_variants/{{r.id}}/" method="POST">
+						{% csrf_token %}
+						<input type="hidden" name="Load" id="load-{{r.id}}" value="Load"/>
+                        <button type="submit" class="btn btn-sm btn-primary">
+                            <span class="fa fa-database"></span>&nbsp;&nbsp;Load into DB
+                        </button>
+					</form>
+				</td>
+                <td>
+                    <span class="fa fa-2x fa-pencil-square-o igsbviewer-modal-edit-button" data-pk="{{r.pk}}"></span>&nbsp;&nbsp;
+                    <span class="fa fa-2x fa-trash igsbviewer-modal-delete-button" data-pk="{{r.id}}"></span>
+                </td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+    <button type="button" class="btn btn-primary btn-sm igsbviewer-modal-add-button">
+        <span class="fa fa-plus-square"></span>&nbsp;&nbsp;Upload New Variant Report
+    </button>
+</div>
+{% endblock %}

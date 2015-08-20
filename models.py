@@ -12,6 +12,10 @@ class Study(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name_plural = 'studies'
+
+
 
 class Caller(models.Model):
     name = models.CharField(max_length=64, verbose_name="Caller Name")
@@ -75,30 +79,24 @@ class Variant(models.Model):
                            blank=True, null=True)
     alt = models.CharField(max_length=256, verbose_name='Alternate Allele',
                            blank=True, null=True)
-    context = models.CharField(max_length=512, verbose_name='Nuc Context',
-                               blank=True, null=True)
     normal_ref_count = models.IntegerField(verbose_name='Normal Ref Count',
                                            blank=True, null=True)
     normal_alt_count = models.IntegerField(verbose_name='Normal Alt Count',
                                            blank=True, null=True)
+    pct_normal_alt = models.FloatField(verbose_name='%_Normal_Alt',
+                                       blank = True, null=True)
     tumor_ref_count = models.IntegerField(verbose_name='Tumor Ref Count',
                                           blank=True, null=True)
     tumor_alt_count = models.IntegerField(verbose_name='Tumor Alt Count',
                                           blank=True, null=True)
-    dbSnp_id = models.CharField(max_length=16, verbose_name='dbSnp ID',
-                                blank=True, null=True)
+    pct_tumor_alt = models.FloatField(verbose_name='%_Tormal_Alt',
+                                      blank=True, null=True)
+    tn_pct_alt_ratio = models.FloatField(verbose_name='T/N % alt ratio',
+                                         blank=True, null=True)
     gene_name = models.CharField(max_length=32, verbose_name='Gene Name',
                                  blank=True, null=True)
-    effect = models.CharField(max_length=32, verbose_name='Effect',
-                              blank=True, null=True)
-    coding = models.CharField(max_length=24, verbose_name='Coding',
-                              blank=True, null=True)
-    codon_change = models.CharField(max_length=16, verbose_name='Codon Change',
-                                    blank=True, null=True)
-    amino_acid_change = models.CharField(max_length=16, null=True,
-                                 verbose_name='Amino Acid Change', blank=True)
-    amino_acid_length = models.IntegerField(verbose_name='Amino Acid Length',
-                                            blank=True, null=True)
+    extra_info = models.CharField(verbose_name='Extra Info', blank=True,
+                                  null=True, max_length=20000)
 
     def __str__(self):
         return "{}:{}{}>{}".format(self.chrom, self.pos, self.ref, self.alt)

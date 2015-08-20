@@ -1,0 +1,44 @@
+<script type="text/javascript">
+//$(document).ready(function(){
+    $('select[name=study]').change(function(){
+        var study_id = $(this).val();
+        var options = [];
+        var request_url = '/viewer/get_bnids_by_study/' + study_id + '/';
+        $.getJSON(
+            request_url,
+            function(data){
+                $.each(data, function(key, val) {
+                    options.push('<option value="' + key + '">' + val + '</option>');
+                });
+                $('select[name=bnids]').html(options.join('\n'));
+            }
+        );
+    });
+
+    //$('select[name=bnids]').empty();
+//});
+</script>
+<div class="container">
+	<h2>Edit Variant Report</h2>
+	<form name='edit_report_form' action="/viewer/report/edit_report/{{ pk }}/" method="post" enctype="multipart/form-data">
+		{% csrf_token %}
+        {% for field in report_form %}
+        <div class="row" style="margin-bottom:8px">
+            <div class="col-sm-2">
+                {{ field.label_tag }}
+            </div>
+            <div class="col-sm-6">
+                {{ field }}
+            </div>
+        </div>
+        {% endfor %}
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-2">
+                <button type="submit" class="btn btn-primary">
+                    <span class="fa fa-cloud-upload"></span>&nbsp;&nbsp;Update
+                </button>
+            </div>
+        </div>
+	</form>
+	<br/>
+</div>

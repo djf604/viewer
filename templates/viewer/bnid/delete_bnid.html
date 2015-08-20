@@ -1,0 +1,20 @@
+<div class="container">
+	<h2>Delete BnID: {{ bnid }}</h2>
+    <p>Are you sure you want to delete '{{ bnid }}'?<br/>
+    This will also delete everything associated with this BnID.</p>
+    <form enctype="multipart/form-data" method="post" action="/viewer/bnid/delete_bnid/{{ pk }}/">
+		{% csrf_token %}
+        <div class="row">
+            <div class="col-xs-12">
+                <button type="button" class="btn btn-primary">No</button>
+                <button type="button" class="btn btn-primary">No</button>
+                <button type="button" class="btn btn-primary">No</button>
+                <button type="button" class="btn btn-primary">No</button>
+                <button type="submit" class="btn btn-primary">
+                    <span class="fa fa-trash"></span>&nbsp;&nbsp;Yes
+                </button>
+            </div>
+        </div>
+	</form>
+	<br>
+</div>

@@ -7,7 +7,7 @@ __author__ = 'jgrundst'
 class StudyUpdateView(UpdateView):
     model = Study
     form_class = StudyForm
-    template_name = 'viewer/study_edit.html'
+    template_name = 'viewer/study/study_edit.html'
 
     def dispatch(self, *args, **kwargs):
         self.study_id = kwargs['pk']
@@ -15,5 +15,5 @@ class StudyUpdateView(UpdateView):
 
     def form_valid(self, form):
         form.save()
-        return render_to_response('viewer/new_study.html', context,
+        return render_to_response('viewer/study/new_study.html', context,
                                   context_instance=RequestContext(request))

@@ -14,12 +14,12 @@
   <div class="form-group">
     <label for="id_username" class="required">Username</label>
     <p class="text-danger"></p>
-    <input id="id_username" maxlength="254" name="username" type="text" style="width: 100%"/>
+    <input id="id_username" class="form-control" maxlength="254" name="username" type="text" style="width: 100%"/>
   </div>
   <div class="form-group">
     <label for="id_password" class="required">Password</label>
     <p class="text-danger"></p>
-    <input id="id_password" name="password" type="password" style="width: 100%"/>
+    <input id="id_password" class="form-control" name="password" type="password" style="width: 100%"/>
     <input type="hidden" name="this_is_the_login_form" value="1" />
     <input type="hidden" name="next" value="/admin/" />
   </div>
@@ -27,6 +27,8 @@
   
   <div class="form-actions clearfix">
       <input type="submit" value="Log in" class="btn btn-lg btn-primary btn-block" />
+	  <br><a href='/password_reset/recover'> forgot/change password?
+	  </a>		  
   </div>
 
   </div>

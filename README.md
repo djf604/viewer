@@ -38,6 +38,7 @@ Web application to load, annotate, parse, search, and display annotated Variant 
 ---
 
 ## Edits to Site (root) settings files:
+Place the ```viewer``` directory into your new or pre-existing site directory, then make the following updates and additions.
 
 ### settings.py
 ```python
@@ -109,5 +110,18 @@ urlpatterns = patterns('',
                       )
 ```
 
+## Create 'project_user' group through the django admin interface
+Under the ```groups``` section, select ```"Add Group"```, then apply these permissions:
+* Caller, Genome
+  * Add 
+* Project
+  * Add
+  * Change
+* Study, Sample, Bnid, Report, Variant
+  * Add
+  * Change
+  * Delete
 
+Every user that registers must be added to the project_user group to be able to use the application.
 
+*NOTE:* Don't forget to create your django superuser account first.

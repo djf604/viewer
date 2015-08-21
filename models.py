@@ -1,8 +1,23 @@
 from django.db import models
+from django.contrib.auth.models import User
+
+
+class Project(models.Model):
+    name = models.CharField(max_length=64, verbose_name="Project Name")
+    description = models.CharField(max_length=2048,
+                                   verbose_name="Project Description")
+    creation_date = models.DateTimeField('Date Created', auto_now=True,
+                                         blank=True)
+    user = models.ManyToManyField(User, blank=True, null=True,
+                                  verbose_name="Project User")
+
+    def __unicode__(self):
+        return self.name
 
 
 class Study(models.Model):
     name = models.CharField(max_length=64, verbose_name="Study Name")
+    project = models.ForeignKey(Project)
     description = models.CharField(max_length=256,
                                    verbose_name="Study Description",
                                    blank=True)
@@ -13,7 +28,7 @@ class Study(models.Model):
         return self.name
 
     class Meta:
-        verbose_name_plural = 'studies'
+        verbose_name_plural = 'Studies'
 
 
 

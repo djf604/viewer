@@ -1,6 +1,6 @@
 from django.contrib.admin.widgets import AdminFileWidget
 from django import forms
-from models import Bnid, Sample, Caller, Report, Study
+from models import Project, Bnid, Sample, Caller, Report, Study
 from django.contrib.auth.models import User
 
 
@@ -11,14 +11,29 @@ class UserForm(forms.ModelForm):
         model = User
         fields = ['username', 'email', 'first_name', 'last_name', 'password']
 
+class ProjectForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(ProjectForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
+
+    class Meta:
+        model = Project
+        fields = ['name', 'description']
+        widgets = {'description': forms.Textarea(attrs={'cols': 30,
+                                                        'rows': 6,
+                                                        'style': 'resize:none'}),}
+
 
 class BnidForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-       super(BnidForm, self).__init__(*args, **kwargs)
-       for field in self.fields:
-           self.fields[field].widget.attrs.update({
-               'class': 'form-control'
-           })
+        super(BnidForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
 
     class Meta:
         model = Bnid

@@ -1,0 +1,92 @@
+{% extends "viewer/base.html" %}
+{% load staticfiles %}
+{% block extra_js %}
+<script type="text/javascript">
+$(document).ready(function(){
+    /* Set up 'add' modal box */
+    new jBox('Modal', {
+        attach: $('.igsbviewer-modal-add-button'),
+        ajax: {
+            url: '/viewer/project/new_project/'
+        },
+        overlay: true,
+        closeOnClick: 'overlay',
+        closeButton: 'box'
+    });
+
+    /* Set up 'edit' and 'delete' modal boxes */
+    var pk = 0;
+    var $modalEditButton = $('.igsbviewer-modal-edit-button');
+    //var $modalDeleteButton = $('.igsbviewer-modal-delete-button');
+    $modalEditButton.click(function(){
+        pk = $(this).data('pk');
+    });
+    //$modalDeleteButton.click(function(){
+    //    pk = $(this).data('pk');
+    //});
+    new jBox('Modal', {
+        onOpen: function(){
+            this.options.ajax.url = '/viewer/project/edit_project/' + pk;
+        },
+        ajax: {
+            reload: true
+        },
+        attach: $modalEditButton,
+        overlay: true,
+        closeOnClick: 'overlay',
+        closeButton: 'box'
+    });
+    /*
+    new jBox('Modal', {
+        onOpen: function(){
+            this.options.ajax.url = '/viewer/sample/delete_sample/' + pk;
+        },
+        ajax: {
+            reload: true
+        },
+        attach: $modalDeleteButton,
+        overlay: true,
+        closeOnClick: 'overlay',
+        closeButton: 'box'
+    })
+    */
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Available Projects:</h2>
+	<table class="table table-hover">
+		<thead>
+            <tr>
+				<th>Project</th>
+				<th>Description</th>
+				<th>Creation Date</th>
+				<th>&nbsp;</th>
+				<th>&nbsp;</th>
+                <th>&nbsp;</th>
+			</tr>
+		</thead>
+			<tbody>
+				{% for p in projects %}
+				<tr>
+					<td>{{p.name}}</td>
+					<td class="col-xs-4">{{p.description}}</td>
+					<td>{{p.creation_date}}</td>
+					<td></td>
+					<td></td>
+                    <td>
+                        <span class="fa fa-2x fa-pencil-square-o igsbviewer-modal-edit-button" data-pk="{{p.pk}}"></span>&nbsp;&nbsp;
+                        <!--<span class="fa fa-2x fa-trash igsbviewer-modal-delete-button" data-pk="{{s.pk}}"></span>-->
+                    </td>
+				</tr>
+				{% endfor %}
+			</tbody>
+	</table>
+    <button type="button" class="btn btn-primary btn-sm igsbviewer-modal-add-button">
+        <span class="fa fa-plus-square"></span>&nbsp;&nbsp;Create New Project
+    </button>
+</div>
+
+{% endblock %}

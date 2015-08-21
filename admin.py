@@ -1,6 +1,10 @@
 from django.contrib import admin
-from models import Bnid, Sample, Study, Caller, Report, Variant, \
+from models import Project, Bnid, Sample, Study, Caller, Report, Variant, \
     Genome
+
+class ProjectAdmin(admin.ModelAdmin):
+    model = Project
+    list_display = ('id', 'name', 'description', 'creation_date')
 
 
 class BnidAdmin(admin.ModelAdmin):
@@ -38,6 +42,7 @@ class VariantAdmin(admin.ModelAdmin):
                     'tumor_alt_count')
 
 
+admin.site.register(Project, ProjectAdmin)
 admin.site.register(Sample, SampleAdmin)
 admin.site.register(Bnid, BnidAdmin)
 admin.site.register(Study, StudyAdmin)

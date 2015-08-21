@@ -10,9 +10,10 @@ import simplejson
 
 #from django_ajax.decorators import ajax
 
-from forms import BnidForm, SampleForm, ReportForm, StudyForm, UserForm
+from forms import ProjectForm, BnidForm, SampleForm, ReportForm, \
+    StudyForm, UserForm
 from forms import StudySelectorForm
-from models import Bnid, Sample, Report, Study, Variant
+from models import Project, Bnid, Sample, Report, Study, Variant
 from access_tests import in_proj_user_group
 
 from util import report_parser
@@ -87,6 +88,49 @@ def permission(request):
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect('/viewer/')
+
+
+'''
+Project model
+'''
+@user_passes_test(in_proj_user_group)
+def manage_project(request):
+    context = {'projects': Project.objects.all()}
+    context.update(csrf(request))
+    return render_to_response('viewer/project/manage_project.html', context,
+                              context_instance=RequestContext(request))
+
+@user_passes_test(in_proj_user_group)
+def new_project(request):
+    if request.method == 'POST':
+        pform = ProjectForm(request.POST, instance=Project())
+        if pform.is_valid():
+            pform.save()
+        return HttpResponseRedirect('/viewer/project/')
+    else:
+        pform = ProjectForm(instance=Project())
+        context = {'project_form': pform}
+        context.update(csrf(request))
+        return render_to_response('viewer/project/new_project.html', context,
+                                  context_instance=RequestContext(request))
+
+@user_passes_test(in_proj_user_group)
+def edit_project(request, project_id):
+    if request.method == 'POST':
+        p = Project.objects.get(pk=project_id)
+        updated_form = ProjectForm(request.POST, instance=p)
+        if updated_form.is_valid():
+            updated_form.save()
+            return HttpResponseRedirect('/viewer/project/')
+    else:
+        proj_obj = Project.objects.get(pk=project_id)
+        pform = ProjectForm(instance=proj_obj)
+        context = {'project_form': pform, 'name': proj_obj.name,
+                   'pk': proj_obj.pk}
+        context.update(csrf(request))
+        return render_to_response('viewer/project/edit_project.html',
+                                  context,
+                                  context_instance=RequestContext(request))
 
 '''
 Study model
@@ -283,7 +327,10 @@ def upload_report(request):
 def edit_report(request, report_id):
     if request.method == 'POST':
         r = Report.objects.get(pk=report_id)
-        updated_form = ReportForm(request.POST, instance=r)
+        if request.FILES:
+            updated_form = ReportForm(request.POST, request.FILES, instance=r)
+        else:
+            updated_form = ReportForm(request.POST, instance=r)
         if updated_form.is_valid():
             updated_form.save()
             return HttpResponseRedirect('/viewer/report')

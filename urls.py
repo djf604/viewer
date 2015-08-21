@@ -15,14 +15,23 @@ urlpatterns = patterns('',
                        url(r'^permission/$', views.permission,
                            name='permission'),
 
+                       # Project
+                       url(r'^project/$', views.manage_project,
+                           name='manage_project'),
+                       url(r'^project/new_project/$',
+                           views.new_project, name='new_project'),
+                       url(r'^project/edit_project/(?P<project_id>\d+)/$',
+                           views.edit_project, name='edit_project'),
+
+
                        # Bnid
                        url(r'^bnid/$',
                            views.manage_bnid, name='manage_bnid'),
                        url(r'^bnid/new_bnid/$',
                            views.new_bnid, name='new_bnid'),
-                       url(r'bnid/edit_bnid/(?P<bnid_id>\d+)/$',
+                       url(r'^bnid/edit_bnid/(?P<bnid_id>\d+)/$',
                            views.edit_bnid, name='edit_bnid'),
-                       url(r'bnid/delete_bnid/(?P<bnid_id>\d+)/$',
+                       url(r'^bnid/delete_bnid/(?P<bnid_id>\d+)/$',
                            views.delete_bnid, name='delete_bnid'),
                        url(r'^get_bnids_by_study/(?P<study_id>\d+)/$',
                            views.get_bnids_by_study, name='get_bnids_by_study'),

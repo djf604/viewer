@@ -1,0 +1,24 @@
+<div class="container">
+	<h2>Edit Project: {{ name }}</h2>
+    <form enctype="multipart/form-data" method="post" action="/viewer/project/edit_project/{{ pk }}/">
+		{% csrf_token %}
+        {% for field in project_form %}
+        <div class="row" style="margin-bottom:8px">
+            <div class="col-sm-2">
+                {{ field.label_tag }}
+            </div>
+            <div class="col-sm-6">
+                {{ field }}
+            </div>
+        </div>
+        {% endfor %}
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-2">
+                <button type="submit" class="btn btn-primary">
+                    <span class="fa fa-pencil-square-o"></span>&nbsp;&nbsp;Update
+                </button>
+            </div>
+        </div>
+	</form>
+	<br>
+</div>

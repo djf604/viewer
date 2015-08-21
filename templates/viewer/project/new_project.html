@@ -1,0 +1,24 @@
+<div class="container">
+	<h2>Create a New Project</h2>
+	<form action="/viewer/project/new_project/" method="post" enctype="multipart/form-data">
+		{% csrf_token %}
+		{% for field in project_form %}
+        <div class="row" style="margin-bottom:8px">
+            <div class="col-sm-2">
+                {{ field.label_tag }}
+            </div>
+            <div class="col-sm-6">
+                {{ field }}
+            </div>
+        </div>
+        {% endfor %}
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-2">
+                <button type="submit" class="btn btn-primary">
+                    <span class="fa fa-plus-square"></span>&nbsp;&nbsp;Create
+                </button>
+            </div>
+        </div>
+	</form>
+	<br/>
+</div>
